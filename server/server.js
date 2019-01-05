@@ -57,6 +57,7 @@ server.post('/api/user/login', (req,res) => {
     .then(user => {
         if(user && bcrypt.compareSync(userCred.password, user[0].password)) {
             const token = generateToken(user[0]);
+            console.log(token)
             res.status(200).json(token)
         } else {
             res.status(401).json({message: 'Invalid login information'})
