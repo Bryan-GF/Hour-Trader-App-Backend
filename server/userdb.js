@@ -20,7 +20,7 @@ function getBranches() {
     return db('branch')
 }
 
-function getUser(id) {
+function getUser(user) {
     return db('users')
-    .where('id', '=', id)
+    .where('username', '=', user.username)
 }
