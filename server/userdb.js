@@ -3,7 +3,8 @@ const db = require('../data/db.js');
 module.exports = {
     getUsers,
     getCompanies,
-    getBranches
+    getBranches,
+    getUser
 }
 
 
@@ -17,4 +18,9 @@ function getCompanies() {
 
 function getBranches() {
     return db('branch')
+}
+
+function getUser(id) {
+    return db('users')
+    .where('id', '=', id)
 }
