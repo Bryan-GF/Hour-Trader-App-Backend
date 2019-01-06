@@ -5,6 +5,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const userDB = require('./userdb.js')
+const timeDB = require('./timetabledb.js')
 
 server.use(express.json())
 server.use(cors());
@@ -12,7 +13,8 @@ server.use(cors());
 function generateToken(user) {
     const payload = {
       id: user.id,
-      username: user.username
+      username: user.username,
+      sector:  user.SECTOR_ID
     };
     const secret = process.env.SECRET;
     const options = {
@@ -21,39 +23,9 @@ function generateToken(user) {
     return jwt.sign(payload, secret, options);
 }
 
-server.get('/users', (req,res) => {
-    userDB.getUsers()
-    .then(users => {
-        res.status(200).json(users);
-    })
-    .catch(err => {
-        res.status(500).json(err);
-    })
-})
-
-server.get('/company', (req,res) => {
-    userDB.getCompanies()
-    .then(companies => {
-        res.status(200).json(companies);
-    })
-    .catch(err => {
-        res.status(500).json(err);
-    })
-})
-
-server.get('/branch', (req,res) => {
-    userDB.getBranches()
-    .then(branches => {
-        res.status(200).json(branches);
-    })
-    .catch(err => {
-        res.status(500).json(err);
-    })
-})
-
 server.post('/api/user/login', (req,res) => {
     let userCred = req.body;
-    userDB.getUser(userCred)
+    userDB.userLogin(userCred)
     .then(user => {
         if(user && bcrypt.compareSync(userCred.password, user[0].password)) {
             const token = generateToken(user[0]);
@@ -65,6 +37,17 @@ server.post('/api/user/login', (req,res) => {
     })
     .catch(err => {
         res.status(500).json(err);
+    })
+})
+
+server.get('/api/timetable', (req, res) => {
+    let sectorID = req.body;
+    timeDB.getTimes(sectorID)
+    .then(timetables => {
+        res.status(200).json(timetables);
+    })
+    .catch(err => {
+        res.status(401).json(err);
     })
 })
 
